@@ -1,9 +1,10 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Fraunces, Manrope, IBM_Plex_Mono } from 'next/font/google';
 import './globals.css';
 import { PlansProvider } from '@/lib/plans-context';
 import { BottomNav } from '@/components/BottomNav';
 import { AddModal } from '@/components/AddModal';
+import { RegisterServiceWorker } from '@/components/RegisterServiceWorker';
 import { COLORS } from '@/lib/constants';
 
 const fraunces = Fraunces({
@@ -27,6 +28,15 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: 'Ecosistema de vínculos',
   description: 'Mantén vivo el equilibrio entre Personal, Amigos, Familia y Pareja.',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Ecosistema',
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: COLORS.bg,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -39,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
           <BottomNav />
           <AddModal />
+          <RegisterServiceWorker />
         </PlansProvider>
       </body>
     </html>
