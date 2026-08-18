@@ -20,11 +20,33 @@ export const AREAS: Record<Area, { label: string; color: string; icon: LucideIco
   pareja: { label: 'Pareja', color: COLORS.pareja, icon: Heart, path: '/pareja' },
 };
 
-export const SUGGESTIONS: Record<Area, string> = {
-  personal: 'Bloquea 45 minutos esta semana para el proyecto que dejaste a medias.',
-  amigos: 'La mayoría con tu perfil arma una salida de trekking una vez al mes.',
-  familia: 'Muchos registran un almuerzo familiar los domingos. Pocas cosas cuestan tan poco y duran tanto.',
-  pareja: 'Las cenas en casa con algo nuevo en el menú son el plan más repetido en pareja.',
+const SUGGESTIONS: Record<Area, { first: string; neglected: string; steady: string }> = {
+  personal: {
+    first: 'Aún no registras nada en Personal. Empieza con algo chico: 20 minutos del proyecto que dejaste a medias.',
+    neglected: 'Bloquea 45 minutos esta semana para el proyecto que dejaste a medias.',
+    steady: 'Vas bien en Personal. Sigue anotando tus avances, por pequeños que sean.',
+  },
+  amigos: {
+    first: 'Aún no registras planes con amigos. La mayoría con tu perfil arma una salida de trekking una vez al mes.',
+    neglected: 'Ya pasó un tiempo sin ver a tus amigos. La mayoría con tu perfil arma una salida una vez al mes.',
+    steady: 'Vas bien con tus amigos. Un café rápido también cuenta.',
+  },
+  familia: {
+    first: 'Aún no registras planes en Familia. Muchos empiezan con un almuerzo dominical.',
+    neglected: 'Muchos registran un almuerzo familiar los domingos. Pocas cosas cuestan tan poco y duran tanto.',
+    steady: 'Vas bien con Familia. Una llamada corta también suma.',
+  },
+  pareja: {
+    first: 'Aún no registras planes en Pareja. Una cena en casa con algo nuevo en el menú es un buen inicio.',
+    neglected: 'Las cenas en casa con algo nuevo en el menú son el plan más repetido en pareja.',
+    steady: 'Vas bien en Pareja. Un detalle pequeño sin ocasión especial siempre suma.',
+  },
 };
+
+export function pickSuggestionText(area: Area, planCount: number, daysSinceLast: number): string {
+  if (planCount === 0) return SUGGESTIONS[area].first;
+  if (daysSinceLast > 7) return SUGGESTIONS[area].neglected;
+  return SUGGESTIONS[area].steady;
+}
 
 export const LISTED_AREAS: ListedArea[] = ['amigos', 'familia', 'pareja'];

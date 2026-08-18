@@ -1,10 +1,10 @@
 import { AREAS, COLORS, LISTED_AREAS } from '@/lib/constants';
 import { daysAgo } from '@/lib/plans-context';
-import type { Area, ListedArea, Plan } from '@/lib/types';
+import type { Area, ListedArea, PlanWithMeta } from '@/lib/types';
 
-export function RecentFeed({ plans }: { plans: Record<Area, Plan[]> }) {
+export function RecentFeed({ plans }: { plans: Record<Area, PlanWithMeta[]> }) {
   const all = LISTED_AREAS.flatMap((k) => plans[k].map((p) => ({ ...p, area: k as ListedArea })));
-  all.sort((a, b) => daysAgo(a.created_at) - daysAgo(b.created_at));
+  all.sort((a, b) => daysAgo(a.plan_date) - daysAgo(b.plan_date));
 
   return (
     <div className="mt-6 pb-4">
@@ -18,7 +18,7 @@ export function RecentFeed({ plans }: { plans: Record<Area, Plan[]> }) {
           </p>
         )}
         {all.slice(0, 4).map((p) => {
-          const d = daysAgo(p.created_at);
+          const d = daysAgo(p.plan_date);
           return (
             <div
               key={p.id}
@@ -28,6 +28,11 @@ export function RecentFeed({ plans }: { plans: Record<Area, Plan[]> }) {
               <div className="flex-1">
                 <p className="text-sm font-medium" style={{ color: COLORS.text }}>
                   {p.title}
+                  {!p.isMine && (
+                    <span className="ml-1 font-normal" style={{ color: COLORS.textMuted }}>
+                      — {p.profiles?.display_name || p.profiles?.email || 'un amigo'}
+                    </span>
+                  )}
                 </p>
                 {p.note && (
                   <p className="mt-0.5 text-xs" style={{ color: COLORS.textMuted }}>

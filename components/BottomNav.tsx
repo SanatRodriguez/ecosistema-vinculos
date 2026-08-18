@@ -2,19 +2,31 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Compass, Users, Home, Heart, User, type LucideIcon } from 'lucide-react';
+import { Compass, Users, Home, Heart, Plus, type LucideIcon } from 'lucide-react';
 import { AREAS, COLORS } from '@/lib/constants';
+import { usePlans } from '@/lib/plans-context';
+import type { ListedArea } from '@/lib/types';
 
-const ITEMS: { key: string; label: string; icon: LucideIcon; href: string }[] = [
+const LEFT_ITEMS: { key: string; label: string; icon: LucideIcon; href: string }[] = [
   { key: 'inicio', label: 'Inicio', icon: Compass, href: '/' },
   { key: 'amigos', label: 'Amigos', icon: Users, href: '/amigos' },
+];
+
+const RIGHT_ITEMS: { key: string; label: string; icon: LucideIcon; href: string }[] = [
   { key: 'familia', label: 'Familia', icon: Home, href: '/familia' },
   { key: 'pareja', label: 'Pareja', icon: Heart, href: '/pareja' },
-  { key: 'perfil', label: 'Perfil', icon: User, href: '/perfil' },
 ];
+
+const AREA_BY_PATH: Record<string, ListedArea> = {
+  '/amigos': 'amigos',
+  '/familia': 'familia',
+  '/pareja': 'pareja',
+};
 
 export function BottomNav() {
   const pathname = usePathname();
+  const { openModal } = usePlans();
+  const addCategory = AREA_BY_PATH[pathname] ?? 'amigos';
 
   return (
     <div
@@ -22,21 +34,46 @@ export function BottomNav() {
       style={{ background: COLORS.bg, borderTop: `1px solid ${COLORS.surfaceAlt}` }}
     >
       <div className="mx-auto flex max-w-md items-center justify-around py-3">
-        {ITEMS.map((it) => {
-          const Icon = it.icon;
-          const active = pathname === it.href;
-          const areaColor = it.key in AREAS ? AREAS[it.key as keyof typeof AREAS].color : COLORS.personal;
-          const color = active ? areaColor : COLORS.textMuted;
-          return (
-            <Link key={it.key} href={it.href} className="flex flex-col items-center gap-1">
-              <Icon size={20} style={{ color }} />
-              <span className="font-mono" style={{ color, fontSize: 9 }}>
-                {it.label}
-              </span>
-            </Link>
-          );
-        })}
+        {LEFT_ITEMS.map((it) => (
+          <NavLink key={it.key} item={it} active={pathname === it.href} />
+        ))}
+        <button
+          onClick={() => openModal(addCategory)}
+          className="flex cursor-pointer items-center justify-center"
+          style={{
+            width: 46,
+            height: 46,
+            borderRadius: 23,
+            background: AREAS[addCategory].color,
+            boxShadow: '0 6px 16px rgba(0,0,0,0.4)',
+          }}
+        >
+          <Plus size={22} style={{ color: COLORS.bg }} />
+        </button>
+        {RIGHT_ITEMS.map((it) => (
+          <NavLink key={it.key} item={it} active={pathname === it.href} />
+        ))}
       </div>
     </div>
+  );
+}
+
+function NavLink({
+  item,
+  active,
+}: {
+  item: { key: string; label: string; icon: LucideIcon; href: string };
+  active: boolean;
+}) {
+  const Icon = item.icon;
+  const areaColor = item.key in AREAS ? AREAS[item.key as keyof typeof AREAS].color : COLORS.personal;
+  const color = active ? areaColor : COLORS.textMuted;
+  return (
+    <Link href={item.href} className="flex flex-col items-center gap-1">
+      <Icon size={20} style={{ color }} />
+      <span className="font-mono" style={{ color, fontSize: 9 }}>
+        {item.label}
+      </span>
+    </Link>
   );
 }

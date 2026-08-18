@@ -1,7 +1,6 @@
 'use client';
 
-import { Plus } from 'lucide-react';
-import { AREAS, COLORS } from '@/lib/constants';
+import { AREAS, COLORS, pickSuggestionText } from '@/lib/constants';
 import { usePlans, daysAgo } from '@/lib/plans-context';
 import { SuggestionCard } from './SuggestionCard';
 import type { ListedArea } from '@/lib/types';
@@ -11,6 +10,9 @@ export function AreaScreen({ area }: { area: ListedArea }) {
   const a = AREAS[area];
   const Icon = a.icon;
   const list = plans[area];
+  const mine = list.filter((p) => p.isMine);
+  const daysSinceLast = mine.length ? Math.min(...mine.map((p) => daysAgo(p.plan_date))) : 30;
+  const suggestionText = pickSuggestionText(area, mine.length, daysSinceLast);
 
   return (
     <div>
@@ -26,7 +28,7 @@ export function AreaScreen({ area }: { area: ListedArea }) {
         </h1>
       </div>
       <div className="px-6">
-        <SuggestionCard area={area} onAdd={() => openModal(area)} />
+        <SuggestionCard area={area} text={suggestionText} onAdd={() => openModal(area)} />
         <p className="font-mono uppercase tracking-widest mt-6" style={{ color: COLORS.textMuted, fontSize: 10 }}>
           {loading ? 'Cargando...' : `${list.length} plan${list.length !== 1 ? 'es' : ''} registrado${list.length !== 1 ? 's' : ''}`}
         </p>
@@ -46,12 +48,17 @@ export function AreaScreen({ area }: { area: ListedArea }) {
             </div>
           )}
           {list.map((p) => {
-            const d = daysAgo(p.created_at);
+            const d = daysAgo(p.plan_date);
             return (
               <div key={p.id} className="rounded-xl p-3" style={{ background: COLORS.surface, borderLeft: `3px solid ${a.color}` }}>
                 <div className="flex items-start justify-between">
                   <p className="text-sm font-medium" style={{ color: COLORS.text }}>
                     {p.title}
+                    {!p.isMine && (
+                      <span className="ml-1 font-normal" style={{ color: COLORS.textMuted }}>
+                        — {p.profiles?.display_name || p.profiles?.email || 'un amigo'}
+                      </span>
+                    )}
                   </p>
                   <span className="font-mono" style={{ color: COLORS.textMuted, fontSize: 10 }}>
                     {d === 0 ? 'hoy' : `${d}d`}
@@ -67,21 +74,6 @@ export function AreaScreen({ area }: { area: ListedArea }) {
           })}
         </div>
       </div>
-      <button
-        onClick={() => openModal(area)}
-        className="fixed z-20 flex cursor-pointer items-center justify-center"
-        style={{
-          right: 20,
-          bottom: 86,
-          width: 52,
-          height: 52,
-          borderRadius: 26,
-          background: a.color,
-          boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
-        }}
-      >
-        <Plus size={22} style={{ color: COLORS.bg }} />
-      </button>
     </div>
   );
 }

@@ -7,4 +7,11 @@ export interface Plan {
   title: string;
   note: string | null;
   created_at: string;
+  plan_date: string;
+  user_id: string;
+  profiles: { display_name: string | null; email: string } | null;
+}
+
+export interface PlanWithMeta extends Plan {
+  isMine: boolean;
 }

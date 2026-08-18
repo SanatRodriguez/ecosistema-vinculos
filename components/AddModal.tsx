@@ -2,7 +2,7 @@
 
 import { X } from 'lucide-react';
 import { AREAS, COLORS } from '@/lib/constants';
-import { usePlans } from '@/lib/plans-context';
+import { usePlans, todayISO } from '@/lib/plans-context';
 import type { Area } from '@/lib/types';
 
 const CATS: Area[] = ['personal', 'amigos', 'familia', 'pareja'];
@@ -64,6 +64,17 @@ export function AddModal() {
           className="mt-2 w-full resize-none rounded-xl p-3 text-sm outline-none"
           style={{ background: COLORS.surfaceAlt, color: COLORS.text }}
         />
+        <label className="mt-2 block text-xs" style={{ color: COLORS.textMuted }}>
+          Fecha
+          <input
+            type="date"
+            value={form.date}
+            max={todayISO()}
+            onChange={(e) => setForm({ ...form, date: e.target.value })}
+            className="mt-1 w-full rounded-xl p-3 text-sm outline-none"
+            style={{ background: COLORS.surfaceAlt, color: COLORS.text }}
+          />
+        </label>
 
         <button
           onClick={savePlan}

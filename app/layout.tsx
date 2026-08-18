@@ -1,10 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import { Fraunces, Manrope, IBM_Plex_Mono } from 'next/font/google';
 import './globals.css';
-import { PlansProvider } from '@/lib/plans-context';
-import { BottomNav } from '@/components/BottomNav';
-import { AddModal } from '@/components/AddModal';
-import { RegisterServiceWorker } from '@/components/RegisterServiceWorker';
+import { AuthProvider } from '@/lib/auth-context';
+import { AppShell } from '@/components/AppShell';
 import { COLORS } from '@/lib/constants';
 
 const fraunces = Fraunces({
@@ -43,14 +41,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es" className={`${fraunces.variable} ${manrope.variable} ${plexMono.variable}`}>
       <body style={{ background: '#0B1512' }}>
-        <PlansProvider>
-          <div className="mx-auto min-h-screen max-w-md" style={{ background: COLORS.bg }}>
-            <main className="pb-28">{children}</main>
-          </div>
-          <BottomNav />
-          <AddModal />
-          <RegisterServiceWorker />
-        </PlansProvider>
+        <AuthProvider>
+          <AppShell>{children}</AppShell>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -1,8 +1,10 @@
 'use client';
 
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { Sparkles, ArrowRight, LogOut } from 'lucide-react';
 import { AREAS, COLORS } from '@/lib/constants';
 import { usePlans } from '@/lib/plans-context';
+import { useAuth } from '@/lib/auth-context';
+import { FriendsSection } from '@/components/FriendsSection';
 
 const WEEKLY: Record<keyof typeof AREAS, number[]> = {
   personal: [1, 1, 0, 1, 1, 1, 0, 1],
@@ -13,12 +15,16 @@ const WEEKLY: Record<keyof typeof AREAS, number[]> = {
 
 export default function PerfilPage() {
   const { plans } = usePlans();
-  const now = new Date();
+  const { user, signOut } = useAuth();
+  const displayName = (user?.user_metadata?.display_name as string | undefined) || user?.email?.split('@')[0] || '';
+
   const totalThisMonth = Object.values(plans)
     .flat()
     .filter((p) => {
-      const d = new Date(p.created_at);
-      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      if (!p.isMine) return false;
+      const [y, m] = p.plan_date.split('-').map(Number);
+      const now = new Date();
+      return y === now.getFullYear() && m - 1 === now.getMonth();
     }).length;
 
   return (
@@ -27,8 +33,11 @@ export default function PerfilPage() {
         Perfil
       </p>
       <h1 className="font-display text-3xl mt-1" style={{ color: COLORS.text }}>
-        Sofía Ramírez
+        {displayName}
       </h1>
+      <p className="mt-1 text-xs" style={{ color: COLORS.textMuted }}>
+        {user?.email}
+      </p>
 
       <div className="mt-6 rounded-2xl p-4" style={{ background: COLORS.surface }}>
         <p className="font-mono uppercase tracking-widest" style={{ color: COLORS.personal, fontSize: 10 }}>
@@ -41,6 +50,8 @@ export default function PerfilPage() {
           Mejorar a Premium <ArrowRight size={14} />
         </button>
       </div>
+
+      <FriendsSection />
 
       <p className="font-mono uppercase tracking-widest mt-8" style={{ color: COLORS.textMuted, fontSize: 10 }}>
         Tu constancia · últimas 8 semanas
@@ -76,6 +87,15 @@ export default function PerfilPage() {
           <span style={{ color: COLORS.text, fontWeight: 600 }}>120 pts</span>.
         </p>
       </div>
+
+      <button
+        onClick={signOut}
+        className="mt-8 flex cursor-pointer items-center gap-2 text-sm"
+        style={{ color: COLORS.textMuted }}
+      >
+        <LogOut size={16} />
+        Cerrar sesión
+      </button>
     </div>
   );
 }

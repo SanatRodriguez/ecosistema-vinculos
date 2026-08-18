@@ -4,7 +4,7 @@ import { usePlans } from '@/lib/plans-context';
 import { RadialMap } from '@/components/RadialMap';
 import { SuggestionCard } from '@/components/SuggestionCard';
 import { RecentFeed } from '@/components/RecentFeed';
-import { COLORS, LISTED_AREAS } from '@/lib/constants';
+import { COLORS, LISTED_AREAS, pickSuggestionText } from '@/lib/constants';
 
 export default function InicioPage() {
   const { plans, freshness, openModal, loading } = usePlans();
@@ -13,6 +13,8 @@ export default function InicioPage() {
     (worst, key) => (freshness[key] > freshness[worst] ? key : worst),
     LISTED_AREAS[0],
   );
+  const neglectedPlanCount = plans[neglected].filter((p) => p.isMine).length;
+  const suggestionText = pickSuggestionText(neglected, neglectedPlanCount, freshness[neglected]);
 
   const today = new Intl.DateTimeFormat('es-PE', {
     weekday: 'long',
@@ -35,7 +37,7 @@ export default function InicioPage() {
       ) : (
         <>
           <RadialMap freshness={freshness} />
-          <SuggestionCard area={neglected} onAdd={() => openModal(neglected)} />
+          <SuggestionCard area={neglected} text={suggestionText} onAdd={() => openModal(neglected)} />
           <RecentFeed plans={plans} />
         </>
       )}

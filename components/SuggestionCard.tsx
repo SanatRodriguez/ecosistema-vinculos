@@ -1,8 +1,8 @@
 import { Sparkles, ArrowRight } from 'lucide-react';
-import { AREAS, COLORS, SUGGESTIONS } from '@/lib/constants';
+import { AREAS, COLORS } from '@/lib/constants';
 import type { Area } from '@/lib/types';
 
-export function SuggestionCard({ area, onAdd }: { area: Area; onAdd: () => void }) {
+export function SuggestionCard({ area, text, onAdd }: { area: Area; text: string; onAdd: () => void }) {
   const a = AREAS[area];
   return (
     <div className="mt-6 rounded-2xl p-4" style={{ background: COLORS.surface, border: `1px solid ${a.color}33` }}>
@@ -13,7 +13,7 @@ export function SuggestionCard({ area, onAdd }: { area: Area; onAdd: () => void 
         </span>
       </div>
       <p className="mt-2 text-sm leading-relaxed" style={{ color: COLORS.text }}>
-        {SUGGESTIONS[area]}
+        {text}
       </p>
       <button onClick={onAdd} className="mt-3 flex cursor-pointer items-center gap-1 text-sm font-medium">
         <span style={{ color: a.color }}>Registrar este plan</span>
