@@ -1,5 +1,5 @@
-import { AreaScreen } from '@/components/AreaScreen';
+import { ParejaScreen } from '@/components/ParejaScreen';
 
 export default function ParejaPage() {
-  return <AreaScreen area="pareja" />;
+  return <ParejaScreen />;
 }

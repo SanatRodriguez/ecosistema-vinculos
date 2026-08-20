@@ -3,6 +3,7 @@
 import { useAuth } from '@/lib/auth-context';
 import { AuthScreen } from './AuthScreen';
 import { PlansProvider } from '@/lib/plans-context';
+import { ParejaProvider } from '@/lib/pareja-context';
 import { BottomNav } from './BottomNav';
 import { AddModal } from './AddModal';
 import { ProfileButton } from './ProfileButton';
@@ -28,13 +29,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <PlansProvider>
-      <div className="mx-auto min-h-screen max-w-md" style={{ background: COLORS.bg }}>
-        <main className="pb-28">{children}</main>
-      </div>
-      <ProfileButton />
-      <BottomNav />
-      <AddModal />
-      <RegisterServiceWorker />
+      <ParejaProvider>
+        <div className="mx-auto min-h-screen max-w-md" style={{ background: COLORS.bg }}>
+          <main className="pb-28">{children}</main>
+        </div>
+        <ProfileButton />
+        <BottomNav />
+        <AddModal />
+        <RegisterServiceWorker />
+      </ParejaProvider>
     </PlansProvider>
   );
 }

@@ -3,9 +3,9 @@
 import { X } from 'lucide-react';
 import { AREAS, COLORS } from '@/lib/constants';
 import { usePlans, todayISO } from '@/lib/plans-context';
-import type { Area } from '@/lib/types';
+import type { ListedArea } from '@/lib/types';
 
-const CATS: Area[] = ['personal', 'amigos', 'familia', 'pareja'];
+const CATS: ListedArea[] = ['amigos', 'familia'];
 
 export function AddModal() {
   const { modalOpen, modalCategory, setModalCategory, form, setForm, savePlan, closeModal, saving } = usePlans();

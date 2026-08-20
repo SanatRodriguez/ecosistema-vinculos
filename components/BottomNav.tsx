@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import { Compass, Users, Home, Heart, Plus, type LucideIcon } from 'lucide-react';
 import { AREAS, COLORS } from '@/lib/constants';
 import { usePlans } from '@/lib/plans-context';
-import type { ListedArea } from '@/lib/types';
 
 const LEFT_ITEMS: { key: string; label: string; icon: LucideIcon; href: string }[] = [
   { key: 'inicio', label: 'Inicio', icon: Compass, href: '/' },
@@ -17,16 +16,15 @@ const RIGHT_ITEMS: { key: string; label: string; icon: LucideIcon; href: string 
   { key: 'pareja', label: 'Pareja', icon: Heart, href: '/pareja' },
 ];
 
-const AREA_BY_PATH: Record<string, ListedArea> = {
+const AREA_BY_PATH: Record<string, 'amigos' | 'familia'> = {
   '/amigos': 'amigos',
   '/familia': 'familia',
-  '/pareja': 'pareja',
 };
 
 export function BottomNav() {
   const pathname = usePathname();
   const { openModal } = usePlans();
-  const addCategory = AREA_BY_PATH[pathname] ?? 'amigos';
+  const addCategory = AREA_BY_PATH[pathname];
 
   return (
     <div
@@ -37,19 +35,23 @@ export function BottomNav() {
         {LEFT_ITEMS.map((it) => (
           <NavLink key={it.key} item={it} active={pathname === it.href} />
         ))}
-        <button
-          onClick={() => openModal(addCategory)}
-          className="flex cursor-pointer items-center justify-center"
-          style={{
-            width: 46,
-            height: 46,
-            borderRadius: 23,
-            background: AREAS[addCategory].color,
-            boxShadow: '0 6px 16px rgba(0,0,0,0.4)',
-          }}
-        >
-          <Plus size={22} style={{ color: COLORS.bg }} />
-        </button>
+        {addCategory ? (
+          <button
+            onClick={() => openModal(addCategory)}
+            className="flex cursor-pointer items-center justify-center"
+            style={{
+              width: 46,
+              height: 46,
+              borderRadius: 23,
+              background: AREAS[addCategory].color,
+              boxShadow: '0 6px 16px rgba(0,0,0,0.4)',
+            }}
+          >
+            <Plus size={22} style={{ color: COLORS.bg }} />
+          </button>
+        ) : (
+          <div style={{ width: 46, height: 46 }} />
+        )}
         {RIGHT_ITEMS.map((it) => (
           <NavLink key={it.key} item={it} active={pathname === it.href} />
         ))}
