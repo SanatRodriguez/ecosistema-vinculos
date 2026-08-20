@@ -4,6 +4,13 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from './supabase';
 
+// Fase de prueba: evita mostrar la pantalla de login usando una cuenta de
+// prueba fija. Poner en false (o borrar este bloque) para volver a exigir
+// login real cuando se empiece a invitar gente de verdad.
+const DEV_SKIP_LOGIN = true;
+const DEV_EMAIL = 'dev-tester@ecosistema-vinculos.local';
+const DEV_PASSWORD = '73cgb0uhmP4RwIpdWs27zgi6';
+
 interface AuthContextValue {
   session: Session | null;
   user: User | null;
@@ -24,14 +31,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
+    let mounted = true;
+
+    async function init() {
+      const { data } = await supabase.auth.getSession();
+      if (!mounted) return;
+      if (data.session) {
+        setSession(data.session);
+        setLoading(false);
+        return;
+      }
+      if (DEV_SKIP_LOGIN) {
+        const { data: signInData } = await supabase.auth.signInWithPassword({
+          email: DEV_EMAIL,
+          password: DEV_PASSWORD,
+        });
+        if (!mounted) return;
+        setSession(signInData.session);
+      }
       setLoading(false);
-    });
+    }
+
+    init();
     const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession);
     });
-    return () => listener.subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
   async function signUp(email: string, password: string, displayName: string) {

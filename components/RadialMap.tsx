@@ -40,18 +40,20 @@ export function RadialMap({ freshness }: { freshness: Record<ListedArea, number>
             />
           );
         })}
-        <circle cx={CENTER.x} cy={CENTER.y} r={34} fill={COLORS.personal} className="pulse" />
-        <text
-          x={CENTER.x}
-          y={CENTER.y + 4}
-          textAnchor="middle"
-          className="font-mono"
-          fontSize={11}
-          fontWeight={600}
-          fill={COLORS.bg}
-        >
-          TÚ
-        </text>
+        <g onClick={() => router.push(AREAS.personal.path)} style={{ cursor: 'pointer' }}>
+          <circle cx={CENTER.x} cy={CENTER.y} r={34} fill={COLORS.personal} className="pulse" />
+          <text
+            x={CENTER.x}
+            y={CENTER.y + 4}
+            textAnchor="middle"
+            className="font-mono"
+            fontSize={11}
+            fontWeight={600}
+            fill={COLORS.bg}
+          >
+            TÚ
+          </text>
+        </g>
         {NODES.map((n) => {
           const p = pos(n.angle, n.r);
           const days = freshness[n.key];

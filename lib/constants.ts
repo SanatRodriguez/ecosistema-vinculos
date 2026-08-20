@@ -14,7 +14,7 @@ export const COLORS = {
 } as const;
 
 export const AREAS: Record<Area, { label: string; color: string; icon: LucideIcon; path: string }> = {
-  personal: { label: 'Personal', color: COLORS.personal, icon: User, path: '/' },
+  personal: { label: 'Personal', color: COLORS.personal, icon: User, path: '/personal' },
   amigos: { label: 'Amigos', color: COLORS.amigos, icon: Users, path: '/amigos' },
   familia: { label: 'Familia', color: COLORS.familia, icon: Home, path: '/familia' },
   pareja: { label: 'Pareja', color: COLORS.pareja, icon: Heart, path: '/pareja' },
